@@ -932,7 +932,7 @@ QuicSocketBase::SendPendingData (bool withAck)
 
   uint32_t nPacketsSent = 0;
 
-  // prioritize stream 0!
+  // prioritize stream 0
   while (m_txBuffer->GetNumFrameStream0InBuffer () > 0)
     {
       NS_LOG_DEBUG ("Send a frame for stream 0");

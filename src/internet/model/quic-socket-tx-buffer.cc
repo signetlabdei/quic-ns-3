@@ -589,8 +589,8 @@ QuicSocketTxBuffer::Retransmission (SequenceNumber32 packetNumber)
           // Add lost packet contents to app buffer
           QuicSocketTxItem *retx = new QuicSocketTxItem ();
           retx->m_packetNumber = packetNumber;
-          retx->m_isStream = true;   // Packets sent with this method are always stream packets
-          retx->m_isStream0 = false;
+          retx->m_isStream = item->m_isStream;
+          retx->m_isStream0 = item->m_isStream0;
           retx->m_packet = Create<Packet> ();
           NS_LOG_LOGIC ("Add packet " << retx->m_packetNumber.GetValue () << " to retx packet");
           MergeItems (*retx, *item);
