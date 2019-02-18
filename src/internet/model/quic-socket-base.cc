@@ -351,10 +351,7 @@ QuicSocketState::QuicSocketState ()
     m_largestSentBeforeRto (0),
     m_timeOfLastSentPacket (
       Seconds (0)),
-    m_largestSentPacket (0),
     m_largestAckedPacket (0),
-    m_latestRtt (
-      Seconds (0)),
     m_smoothedRtt (Seconds (0)),
     m_rttVar (0),
     m_minRtt (
@@ -396,11 +393,8 @@ QuicSocketState::QuicSocketState (const QuicSocketState &other)
       other.m_largestSentBeforeRto),
     m_timeOfLastSentPacket (
       other.m_timeOfLastSentPacket),
-    m_largestSentPacket (
-      other.m_largestSentPacket),
     m_largestAckedPacket (
       other.m_largestAckedPacket),
-    m_latestRtt (other.m_latestRtt),
     m_smoothedRtt (
       other.m_smoothedRtt),
     m_rttVar (other.m_rttVar),
@@ -1423,7 +1417,7 @@ QuicSocketBase::ReTxTimeout ()
             {
               m_tcb->m_congState = TcpSocketState::CA_RECOVERY;
               m_tcb->m_cWnd = m_tcb->m_ssThresh;
-              m_tcb->m_endOfRecovery = m_tcb->m_largestSentPacket;
+              m_tcb->m_endOfRecovery = m_tcb->m_highTxMark;
               m_congestionControl->CongestionStateSet (
                 m_tcb, TcpSocketState::CA_RECOVERY);
               m_tcb->m_ssThresh = m_congestionControl->GetSsThresh (
@@ -1452,7 +1446,7 @@ QuicSocketBase::ReTxTimeout ()
       // RTO.
       if (m_tcb->m_rtoCount == 0)
         {
-          m_tcb->m_largestSentBeforeRto = m_tcb->m_largestSentPacket;
+          m_tcb->m_largestSentBeforeRto = m_tcb->m_highTxMark;
         }
       // RTO. Send two new data packets, do not retransmit - IETF Draft QUIC Recovery, Sec. 4.3.3
       NS_LOG_INFO ("RTO triggered");
@@ -2131,7 +2125,7 @@ QuicSocketBase::OnReceivedAckFrame (QuicSubheader &sub)
             {
               // Reset congestion window and go into loss mode
               m_tcb->m_cWnd = m_tcb->m_kMinimumWindow;
-              m_tcb->m_endOfRecovery = m_tcb->m_largestSentPacket;
+              m_tcb->m_endOfRecovery = m_tcb->m_highTxMark;
               m_tcb->m_ssThresh = m_congestionControl->GetSsThresh (
                   m_tcb, inFlightBeforeRto);
               m_tcb->m_congState = TcpSocketState::CA_LOSS;
@@ -2163,7 +2157,7 @@ QuicSocketBase::OnReceivedAckFrame (QuicSubheader &sub)
           if (m_tcb->m_congState != TcpSocketState::CA_RECOVERY)
             {
               m_tcb->m_congState = TcpSocketState::CA_RECOVERY;
-              m_tcb->m_endOfRecovery = m_tcb->m_largestSentPacket;
+              m_tcb->m_endOfRecovery = m_tcb->m_highTxMark;
               m_congestionControl->CongestionStateSet (
                 m_tcb, TcpSocketState::CA_RECOVERY);
               m_tcb->m_ssThresh = m_congestionControl->GetSsThresh (
@@ -2187,7 +2181,7 @@ QuicSocketBase::OnReceivedAckFrame (QuicSubheader &sub)
           // Process the ACK
           DynamicCast<QuicCongestionOps> (m_congestionControl)->OnAckReceived (
             m_tcb, sub, ackedPackets);
-          m_lastRtt = m_tcb->m_latestRtt;
+          m_lastRtt = m_tcb->m_lastRtt;
         }
       else
         {
@@ -2203,15 +2197,15 @@ QuicSocketBase::OnReceivedAckFrame (QuicSubheader &sub)
           if (lastAcked->m_packetNumber >= m_tcb->m_largestAckedPacket)
             {
               Time ackDelay = MicroSeconds(sub.GetAckDelay());
-              m_tcb->m_latestRtt = Now () - lastAcked->m_lastSent - ackDelay;
-              m_lastRtt = m_tcb->m_latestRtt;
+              m_tcb->m_lastRtt = Now () - lastAcked->m_lastSent - ackDelay;
+              m_lastRtt = m_tcb->m_lastRtt;
             }
           if (m_tcb->m_congState != TcpSocketState::CA_RECOVERY
               && m_tcb->m_congState != TcpSocketState::CA_LOSS)
             {
               // Increase the congestion window
               m_congestionControl->PktsAcked (m_tcb, ackedSegments,
-                                              m_tcb->m_latestRtt);
+                                              m_tcb->m_lastRtt);
               m_congestionControl->IncreaseWindow (m_tcb, ackedSegments);
             }
           else
@@ -2219,13 +2213,13 @@ QuicSocketBase::OnReceivedAckFrame (QuicSubheader &sub)
               if (m_tcb->m_endOfRecovery.GetValue () > largestAcknowledged)
                 {
                   m_congestionControl->PktsAcked (m_tcb, ackedSegments,
-                                                  m_tcb->m_latestRtt);
+                                                  m_tcb->m_lastRtt);
                   m_congestionControl->IncreaseWindow (m_tcb, ackedSegments);
                 }
               else
                 {
                   m_tcb->m_congState = TcpSocketState::CA_OPEN;
-                  m_congestionControl->PktsAcked (m_tcb, ackedSegments, m_tcb->m_latestRtt);
+                  m_congestionControl->PktsAcked (m_tcb, ackedSegments, m_tcb->m_lastRtt);
                   m_congestionControl->CongestionStateSet (m_tcb, TcpSocketState::CA_OPEN);
                 }
             }

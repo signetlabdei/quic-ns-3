@@ -90,7 +90,7 @@ QuicCongestionOps::OnPacketSent (Ptr<TcpSocketState> tcb,
   NS_ASSERT_MSG (tcbd != 0, "tcb is not a QuicSocketState");
 
   tcbd->m_timeOfLastSentPacket = Now ();
-  tcbd->m_largestSentPacket = packetNumber;
+  tcbd->m_highTxMark = packetNumber;
 }
 
 void
@@ -113,8 +113,8 @@ QuicCongestionOps::OnAckReceived (Ptr<TcpSocketState> tcb,
   // If the largest acked is newly acked, update the RTT.
   if (lastAcked->m_packetNumber == tcbd->m_largestAckedPacket)
     {
-      tcbd->m_latestRtt = Now () - lastAcked->m_lastSent;
-      UpdateRtt (tcbd, tcbd->m_latestRtt, Time (ack.GetAckDelay ()));
+      tcbd->m_lastRtt = Now () - lastAcked->m_lastSent;
+      UpdateRtt (tcbd, tcbd->m_lastRtt, Time (ack.GetAckDelay ()));
     }
 
   NS_LOG_LOGIC ("Processing acknowledged packets");
@@ -246,7 +246,7 @@ QuicCongestionOps::OnPacketsLost (
   // Start a new recovery epoch if the lost packet is larger than the end of the previous recovery epoch.
   if (!InRecovery (tcbd, largestLostPacket->m_packetNumber))
     {
-      tcbd->m_endOfRecovery = tcbd->m_largestSentPacket;
+      tcbd->m_endOfRecovery = tcbd->m_highTxMark;
       tcbd->m_cWnd *= tcbd->m_kLossReductionFactor;
       if (tcbd->m_cWnd < tcbd->m_kMinimumWindow)
         {

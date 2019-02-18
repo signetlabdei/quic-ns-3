@@ -78,7 +78,6 @@ public:
   uint32_t m_rtoCount;                      //!< The number of times an rto has been sent without receiving an ack.
   SequenceNumber32 m_largestSentBeforeRto;  //!< The last packet number sent prior to the first retransmission timeout.
   Time m_timeOfLastSentPacket;              //!< The time the most recent packet was sent.
-  SequenceNumber32 m_largestSentPacket;     //!< The packet number of the most recently sent packet.
   SequenceNumber32 m_largestAckedPacket;    //!< The largest packet number acknowledged in an ACK frame.
   Time m_latestRtt;                         /**< The most recent RTT measurement made when receiving an ack for a
                                              *   previously unacked packet. */
