@@ -88,10 +88,6 @@ public:
   Time m_maxAckDelay;                       /**< The maximum ack delay in an incoming ACK frame for this connection.
                                              *   Excludes ack delays for ack only packets and those that create an
                                              *   RTT sample less than m_minRtt. */
-  SequenceNumber32 m_reorderingThreshold;   /**< The largest delta between the largest acked retransmittable packet
-                                             *   and packet containing retransmittable frames before it's declared
-                                             *   lost. */
-  Time m_timeReorderingFraction;            //!< The reordering window as fraction of max(smoothed_rtt, latest_rtt);
   Time m_lossTime;                          /**< The time at which the next packet will be considered lost based
                                              *   on early transmit or exceeding the reordering window in time. */
 
@@ -107,7 +103,7 @@ public:
   uint32_t m_kMaxTLPs;                          //!< Maximum number of tail loss probes before an RTO fires.
   uint32_t m_kReorderingThreshold;              /**< Maximum reordering in packet number space before FACK style loss
                                                  *   detection considers a packet lost. */
-  Time m_kTimeReorderingFraction;               /**< Maximum reordering in time space before time based loss detection
+  double m_kTimeReorderingFraction;               /**< Maximum reordering in time space before time based loss detection
                                                  *   considers a packet lost. In fraction of an RTT. */
   bool m_kUsingTimeLossDetection;               /**< Whether time based loss detection is in use. If false, uses FACK
                                                  *   style loss detection. */

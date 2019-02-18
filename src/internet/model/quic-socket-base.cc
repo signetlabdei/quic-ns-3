@@ -172,9 +172,9 @@ QuicSocketBase::GetTypeId (void)
     .AddAttribute (
                    "kTimeReorderingFraction",
                    "Maximum reordering in time space before time based loss detection considers a packet lost",
-                   TimeValue (Seconds (1 / 8)),
-                   MakeTimeAccessor (&QuicSocketState::m_kTimeReorderingFraction),
-                   MakeTimeChecker ())
+                   DoubleValue (9 / 8),
+                   MakeDoubleAccessor (&QuicSocketState::m_kTimeReorderingFraction),
+                   MakeDoubleChecker<double> (0))
     .AddAttribute (
                    "kUsingTimeLossDetection",
                    "Whether time based loss detection is in use", BooleanValue (false),
@@ -307,9 +307,9 @@ QuicSocketState::GetTypeId (void)
                    MakeUintegerChecker<uint32_t> ())
     .AddAttribute ("kTimeReorderingFraction",
                    "Maximum reordering in time space before time based loss detection considers a packet lost",
-                   TimeValue (Seconds (1 / 8)),
-                   MakeTimeAccessor (&QuicSocketState::m_kTimeReorderingFraction),
-                   MakeTimeChecker ())
+                   DoubleValue (9 / 8),
+                   MakeDoubleAccessor (&QuicSocketState::m_kTimeReorderingFraction),
+                   MakeDoubleChecker<double> (0))
     .AddAttribute ("kUsingTimeLossDetection",
                    "Whether time based loss detection is in use", BooleanValue (false),
                    MakeBooleanAccessor (&QuicSocketState::m_kUsingTimeLossDetection),
@@ -368,7 +368,7 @@ QuicSocketState::QuicSocketState ()
     m_kMaxTLPs (
       2),
     m_kReorderingThreshold (3),
-    m_kTimeReorderingFraction (1 / 8),
+    m_kTimeReorderingFraction (9 / 8),
     m_kUsingTimeLossDetection (
       false),
     m_kMinTLPTimeout (MilliSeconds (10)),
@@ -382,16 +382,6 @@ QuicSocketState::QuicSocketState ()
     m_kMaxPacketsReceivedBeforeAckSend (20)
 {
   m_lossDetectionAlarm.Cancel ();
-  if (m_kUsingTimeLossDetection)
-    {
-      m_reorderingThreshold = UINT32_MAX;     // infinite
-      m_timeReorderingFraction = m_kTimeReorderingFraction;
-    }
-  else
-    {
-      m_reorderingThreshold = m_kReorderingThreshold;
-      m_timeReorderingFraction = Time::Max ();    // infinite
-    }
 }
 
 QuicSocketState::QuicSocketState (const QuicSocketState &other)
@@ -441,16 +431,6 @@ QuicSocketState::QuicSocketState (const QuicSocketState &other)
     m_kMaxPacketsReceivedBeforeAckSend (other.m_kMaxPacketsReceivedBeforeAckSend)
 {
   m_lossDetectionAlarm.Cancel ();
-  if (m_kUsingTimeLossDetection)
-    {
-      m_reorderingThreshold = other.m_reorderingThreshold;     // infinite
-      m_timeReorderingFraction = other.m_timeReorderingFraction;
-    }
-  else
-    {
-      m_reorderingThreshold = other.m_reorderingThreshold;
-      m_timeReorderingFraction = other.m_timeReorderingFraction;    // infinite
-    }
 }
 
 QuicSocketBase::QuicSocketBase (void)
@@ -1332,6 +1312,11 @@ QuicSocketBase::SetReTxTimeout ()
     {
       m_tcb->m_lossDetectionAlarm.Cancel ();
       return;
+    }
+  
+  if (m_tcb->m_kUsingTimeLossDetection)
+    {
+      m_tcb->m_lossTime = Simulator::Now() + m_tcb->m_kTimeReorderingFraction * m_tcb->m_smoothedRtt;
     }
 
   Time alarmDuration;

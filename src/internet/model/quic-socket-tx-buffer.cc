@@ -524,7 +524,7 @@ QuicSocketTxBuffer::OnAckUpdate (
               if (tcbd->m_kUsingTimeLossDetection)
                 {
                   double lhsComparison = ((*acked_it)->m_ackTime - (*sent_it)->m_lastSent).GetSeconds();
-                  double rhsComparison = tcbd->m_kTimeReorderingFraction.GetSeconds() * tcbd->m_smoothedRtt.GetSeconds();
+                  double rhsComparison = tcbd->m_kTimeReorderingFraction * tcbd->m_smoothedRtt.GetSeconds();
                   if (lhsComparison >= rhsComparison)
                     {
                       NS_LOG_UNCOND ("Largest ACK " << largestAcknowledged << ", lost packet " << (*sent_it)->m_packetNumber.GetValue () << " - time " << rhsComparison);
