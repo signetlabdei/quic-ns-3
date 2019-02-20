@@ -1,3 +1,13 @@
+QUIC implementation for ns-3
+================================
+
+## QUIC code base
+This repository contains in the `src/internet` and `src/applications` the code for the implementation of the QUIC protocol for ns-3.
+
+The implementation is described in [this paper](https://arxiv.org/abs/1902.06121).
+
+Please use the issue tracker for bugs/questions.
+
 
 The Network Simulator, Version 3
 ================================
