@@ -160,7 +160,7 @@ public:
 class QuicSocketBase : public QuicSocket
 {
 public:
-  static const uint16_t INITIAL_PACKET_SIZE;
+  static const uint16_t MIN_INITIAL_PACKET_SIZE;
 
   /**
    * Get the type ID.
@@ -488,6 +488,21 @@ public:
    */
   uint32_t GetInitialSSThresh (void) const;
 
+  /**
+   * \brief Set the size of initial packet of the handshake
+   * It must be at least 1200 bytes
+   *
+   * \param the size in bytes
+   */
+  void SetInitialPacketSize (uint32_t size);
+
+  /**
+   * \brief Get the size of initial packet of the handshake
+   *
+   * \returns the size (in bytes)
+   */
+  uint32_t GetInitialPacketSize (void) const;
+
   // Implementation of ns3::Socket virtuals
   
   /**
@@ -717,6 +732,8 @@ protected:
   bool m_quicCongestionControlLegacy;             //!< Quic Congestion control if true, TCP Congestion control if false
   bool m_queue_ack;                               //!< Indicates a request for a queue ACK if true
   uint32_t m_numPacketsReceivedSinceLastAckSent;  //!< Number of packets received since last ACK sent
+
+  uint32_t m_initialPacketSize; //!< size of the first packet to be sent durin the handshake (at least 1200 bytes, per RFC)
 
   /**
   * \brief Callback pointer for cWnd trace chaining

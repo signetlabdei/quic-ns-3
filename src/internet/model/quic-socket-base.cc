@@ -73,7 +73,7 @@ NS_LOG_COMPONENT_DEFINE ("QuicSocketBase");
 
 NS_OBJECT_ENSURE_REGISTERED (QuicSocketBase);
 
-const uint16_t QuicSocketBase::INITIAL_PACKET_SIZE = 1200;
+const uint16_t QuicSocketBase::MIN_INITIAL_PACKET_SIZE = 1200;
 
 TypeId
 QuicSocketBase::GetInstanceTypeId () const
@@ -209,6 +209,13 @@ QuicSocketBase::GetTypeId (void)
                    MakeUintegerAccessor (&QuicSocketBase::GetInitialSSThresh,
                                          &QuicSocketBase::SetInitialSSThresh),
                    MakeUintegerChecker<uint32_t> ())
+    .AddAttribute ("InitialPacketSize",
+                   "QUIC initial slow start threshold (bytes)",
+                   UintegerValue (1200),
+                   MakeUintegerAccessor (&QuicSocketBase::GetInitialPacketSize,
+                                         &QuicSocketBase::SetInitialPacketSize),
+                   MakeUintegerChecker<uint32_t> (
+                    QuicSocketBase::MIN_INITIAL_PACKET_SIZE, UINT32_MAX))
 //    .AddAttribute (
 //                   "LegacyCongestionControl",
 //                   "When true, use TCP implementations for the congestion control",
@@ -1888,7 +1895,7 @@ QuicSocketBase::SendInitialHandshake (uint8_t type,
       // "Clients MUST ensure that the first Initial packet they
       // send is sent in a UDP datagram that is at least 1200 octets."
       Ptr<Packet> payload = Create<Packet> (
-          QuicSocketBase::INITIAL_PACKET_SIZE - p->GetSize ());
+        GetInitialPacketSize() - p->GetSize ());
       p->AddAtEnd (payload);
 
       m_quicl5->DispatchSend (p, 0);
@@ -1900,7 +1907,7 @@ QuicSocketBase::SendInitialHandshake (uint8_t type,
       Ptr<Packet> p = Create<Packet> ();
       p->AddHeader (OnSendingTransportParameters ());
       Ptr<Packet> payload = Create<Packet> (
-          QuicSocketBase::INITIAL_PACKET_SIZE - p->GetSize ());
+          GetInitialPacketSize() - p->GetSize ());
       p->AddAtEnd (payload);
 
       m_quicl5->DispatchSend (p, 0);
@@ -1915,7 +1922,7 @@ QuicSocketBase::SendInitialHandshake (uint8_t type,
         }
 
       Ptr<Packet> payload = Create<Packet> (
-          QuicSocketBase::INITIAL_PACKET_SIZE - p->GetSize ());
+          GetInitialPacketSize() - p->GetSize ());
       p->AddAtEnd (payload);
 
       m_quicl5->DispatchSend (p, 0);
@@ -2302,7 +2309,7 @@ QuicSocketBase::OnReceivedTransportParameters (
     }
 
   if (transportParameters.GetMaxPacketSize ()
-      < QuicSocketBase::INITIAL_PACKET_SIZE
+      < QuicSocketBase::MIN_INITIAL_PACKET_SIZE
       or transportParameters.GetMaxPacketSize () > 65527)
     {
       AbortConnection (
@@ -2500,11 +2507,11 @@ QuicSocketBase::ReceivedData (Ptr<Packet> p, const QuicHeader& quicHeader,
           return;
         }
 
-      if (p->GetSize () < QuicSocketBase::INITIAL_PACKET_SIZE)
+      if (p->GetSize () < QuicSocketBase::MIN_INITIAL_PACKET_SIZE)
         {
           std::stringstream error;
           error << "Initial Packet smaller than "
-                << QuicSocketBase::INITIAL_PACKET_SIZE << " octects";
+                << QuicSocketBase::MIN_INITIAL_PACKET_SIZE << " octects";
           AbortConnection (
             QuicSubheader::TransportErrorCodes_t::PROTOCOL_VIOLATION,
             error.str ().c_str ());
@@ -2916,6 +2923,19 @@ uint32_t
 QuicSocketBase::GetInitialSSThresh (void) const
 {
   return m_tcb->m_initialSsThresh;
+}
+
+void
+QuicSocketBase::SetInitialPacketSize (uint32_t size)
+{
+  NS_ABORT_MSG_IF(size < 1200, "The size of the initial packet should be at least 1200 bytes");
+  m_initialPacketSize = size;
+}
+
+uint32_t
+QuicSocketBase::GetInitialPacketSize () const
+{
+  return m_initialPacketSize;
 }
 
 } // namespace ns3
