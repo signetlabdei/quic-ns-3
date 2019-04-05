@@ -241,7 +241,8 @@ def build(bld):
         'model/quic-stream-rx-buffer.cc',
         'model/quic-header.cc',
         'model/quic-subheader.cc',
-        'model/quic-transport-parameters.cc'
+        'model/quic-transport-parameters.cc',
+        'helper/quic-helper.cc'
         ]
 
     internet_test = bld.create_ns3_module_test_library('internet')
@@ -444,7 +445,8 @@ def build(bld):
         'model/quic-header.h',
         'model/quic-subheader.h',
         'model/ipv4-end-point.h',
-        'model/quic-transport-parameters.h'
+        'model/quic-transport-parameters.h',
+        'helper/quic-helper.h'
        ]
 
     if bld.env['NSC_ENABLED']:

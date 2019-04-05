@@ -49,7 +49,6 @@
 #include "ns3/traffic-control-layer.h"
 #include <limits>
 #include <map>
-#include "ns3/quic-socket-factory.h"
 
 namespace ns3 {
 
@@ -255,14 +254,12 @@ InternetStackHelper::AssignStreams (NodeContainer c, int64_t stream)
 void
 InternetStackHelper::SetTcp (const std::string tid)
 {
-  NS_LOG_INFO("Stack - setTcp " << tid);
   m_tcpFactory.SetTypeId (tid);
 }
 
 void 
 InternetStackHelper::SetTcp (std::string tid, std::string n0, const AttributeValue &v0)
 {
-  NS_LOG_INFO("Stack - setTcp " << tid << " " << n0 << " " << &v0);
   m_tcpFactory.SetTypeId (tid);
   m_tcpFactory.Set (n0,v0);
 }
@@ -270,7 +267,6 @@ InternetStackHelper::SetTcp (std::string tid, std::string n0, const AttributeVal
 void 
 InternetStackHelper::Install (NodeContainer c) const
 {
-  NS_LOG_INFO("stack install");
   for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
     {
       Install (*i);
@@ -297,7 +293,6 @@ InternetStackHelper::Install (Ptr<Node> node) const
 {
   if (m_ipv4Enabled)
     {
-      NS_LOG_INFO("IPv4 Enabled");
       if (node->GetObject<Ipv4> () != 0)
         {
           NS_FATAL_ERROR ("InternetStackHelper::Install (): Aggregating " 
@@ -322,7 +317,6 @@ InternetStackHelper::Install (Ptr<Node> node) const
 
   if (m_ipv6Enabled)
     {
-    NS_LOG_INFO("IPv6 Enabled");
       /* IPv6 stack */
       if (node->GetObject<Ipv6> () != 0)
         {
@@ -353,29 +347,20 @@ InternetStackHelper::Install (Ptr<Node> node) const
     {
       CreateAndAggregateObjectFromTypeId (node, "ns3::TrafficControlLayer");
       CreateAndAggregateObjectFromTypeId (node, "ns3::UdpL4Protocol");
-      CreateAndAggregateObjectFromTypeId (node, "ns3::QuicL4Protocol");
       node->AggregateObject (m_tcpFactory.Create<Object> ());
       Ptr<PacketSocketFactory> factory = CreateObject<PacketSocketFactory> ();
       node->AggregateObject (factory);
     }
-}
 
-void
-InternetStackHelper::InstallQuic (NodeContainer c) const
-{
-  NS_LOG_INFO("stack install");
-  for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
+  if (m_ipv4Enabled)
     {
-      Install (*i);
-      NS_LOG_INFO("ok " << *i);
-      CreateAndAggregateObjectFromTypeId (*i, "ns3::QuicL4Protocol");
-
-//      Ptr<QuicSocketFactory> factory = CreateObject<QuicSocketFactory> ();
-//      factory->SetNode(*i);
-//      (*i)->AggregateObject (factory);
+      Ptr<ArpL3Protocol> arp = node->GetObject<ArpL3Protocol> ();
+      Ptr<TrafficControlLayer> tc = node->GetObject<TrafficControlLayer> ();
+      NS_ASSERT (arp);
+      NS_ASSERT (tc);
+      arp->SetTrafficControl (tc);
     }
 }
-
 
 void
 InternetStackHelper::Install (std::string nodeName) const

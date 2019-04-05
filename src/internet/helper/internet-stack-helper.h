@@ -166,7 +166,7 @@ public:
    * new stacks.
    */
   void Install (NodeContainer c) const;
-  void InstallQuic (NodeContainer c) const;
+
   /**
    * Aggregate IPv4, IPv6, UDP, and TCP stacks to all nodes in the simulation
    */
