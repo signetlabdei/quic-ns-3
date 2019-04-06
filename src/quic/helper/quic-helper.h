@@ -28,8 +28,8 @@
 #include "ns3/object-factory.h"
 #include "ns3/ipv4-l3-protocol.h"
 #include "ns3/ipv6-l3-protocol.h"
-#include "internet-trace-helper.h"
-#include "internet-stack-helper.h"
+#include "ns3/internet-trace-helper.h"
+#include "ns3/internet-stack-helper.h"
 
 namespace ns3 {
 /**

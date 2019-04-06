@@ -28,8 +28,8 @@
 #include "ns3/timer.h"
 #include "ns3/object.h"
 #include "quic-subheader.h"
-#include "tcp-congestion-ops.h"
-#include "tcp-socket-base.h"
+#include "ns3/tcp-congestion-ops.h"
+#include "ns3/tcp-socket-base.h"
 #include "quic-socket-base.h"
 #include "quic-socket-tx-buffer.h"
 
