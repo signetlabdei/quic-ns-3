@@ -236,8 +236,10 @@ int main (int argc, char *argv[])
   AccessLink.SetDeviceAttribute ("DataRate", StringValue (access_bandwidth));
   AccessLink.SetChannelAttribute ("Delay", StringValue (access_delay));
 
-  InternetStackHelper stack;
-  stack.InstallAll ();
+  QuicHelper stack;
+  stack.InstallQuic (sources);
+  stack.InstallQuic (sinks);
+  stack.InstallQuic (gateways);
 
   TrafficControlHelper tchPfifo;
   tchPfifo.SetRootQueueDisc ("ns3::PfifoFastQueueDisc");

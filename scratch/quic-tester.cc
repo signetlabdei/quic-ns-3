@@ -85,8 +85,8 @@ main (int argc, char *argv[])
   NetDeviceContainer devices;
   devices = pointToPoint.Install (nodes);
 
-  InternetStackHelper stack;
-  stack.Install (nodes);
+  QuicHelper stack;
+  stack.InstallQuic (nodes);
 
   Ipv4AddressHelper address;
   address.SetBase ("10.1.1.0", "255.255.255.0");
