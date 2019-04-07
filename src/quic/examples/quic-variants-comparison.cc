@@ -45,9 +45,11 @@
 #include <fstream>
 #include <string>
 
+#include <ns3/config-store.h>
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
 #include "ns3/internet-module.h"
+#include "ns3/quic-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/applications-module.h"
 #include "ns3/error-model.h"
@@ -61,7 +63,7 @@
 
 using namespace ns3;
 
-NS_LOG_COMPONENT_DEFINE ("QuicVariantsComparisonBulkSend");
+NS_LOG_COMPONENT_DEFINE ("QuicVariantsComparison");
 
 // connect to a number of traces
 static void
@@ -187,7 +189,7 @@ int main (int argc, char *argv[])
   float start_time = 0.1;
   float stop_time = start_time + duration;
 
-  // 4 MB of TCP buffer
+  // 4 MB of buffer
   Config::SetDefault ("ns3::QuicSocketBase::SocketRcvBufSize", UintegerValue (1 << 21));
   Config::SetDefault ("ns3::QuicSocketBase::SocketSndBufSize", UintegerValue (1 << 21));
   Config::SetDefault ("ns3::QuicStreamBase::StreamSndBufSize", UintegerValue (1 << 21));
@@ -207,6 +209,7 @@ int main (int argc, char *argv[])
       NS_ABORT_MSG_UNLESS (TypeId::LookupByNameFailSafe (transport_prot, &tcpTid), "TypeId " << transport_prot << " not found");
       Config::SetDefault ("ns3::QuicL4Protocol::SocketType", TypeIdValue (TypeId::LookupByName (transport_prot)));
     }
+
 
   // Create gateways, sources, and sinks
   NodeContainer gateways;
@@ -314,28 +317,28 @@ int main (int argc, char *argv[])
   NS_LOG_INFO ("Initialize Global Routing.");
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 
-  uint16_t port = 50000;
-  Address sinkLocalAddress (InetSocketAddress (Ipv4Address::GetAny (), port));
-  
+  uint16_t port = 50000;  
   ApplicationContainer clientApps;
   ApplicationContainer serverApps;
-  // applications client and server
+  double interPacketInterval = 1000;
+
+  // QUIC client and server
   for (uint16_t i = 0; i < sources.GetN (); i++)
     {
+      QuicServerHelper dlPacketSinkHelper (port);
       AddressValue remoteAddress (InetSocketAddress (sink_interfaces.GetAddress (i, 0), port));
-      BulkSendHelper ftp ("ns3::QuicSocketFactory", Address ());
-      ftp.SetAttribute ("Remote", remoteAddress);
-      ftp.SetAttribute ("SendSize", UintegerValue (1400));
-      clientApps.Add(ftp.Install (sources.Get (i)));
-      PacketSinkHelper sinkHelper ("ns3::QuicSocketFactory", sinkLocalAddress);
-      sinkHelper.SetAttribute ("Protocol", TypeIdValue (QuicSocketFactory::GetTypeId ()));
-      serverApps.Add(sinkHelper.Install (sinks.Get (i)));
+      serverApps.Add (dlPacketSinkHelper.Install (sinks.Get (i)));
+      QuicClientHelper dlClient (sink_interfaces.GetAddress (i, 0), port);
+      dlClient.SetAttribute ("Interval", TimeValue (MicroSeconds(interPacketInterval)));
+      dlClient.SetAttribute ("PacketSize", UintegerValue(1400));
+      dlClient.SetAttribute ("MaxPackets", UintegerValue(10000000));
+      clientApps.Add (dlClient.Install (sources.Get (i)));
     }
 
   serverApps.Start (Seconds (0.99));
   clientApps.Stop (Seconds (20.0));
-  clientApps.Start (Seconds (2));
-
+  clientApps.Start (Seconds (2.0));
+  
   for (uint16_t i = 0; i < num_flows; i++)
     {
       auto n2 = sinks.Get (i);

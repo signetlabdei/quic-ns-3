@@ -226,23 +226,7 @@ def build(bld):
         'helper/ripng-helper.cc',
         'model/rip.cc',
         'model/rip-header.cc',
-        'helper/rip-helper.cc',
-        'model/quic-congestion-ops.cc',
-        'model/quic-socket.cc',
-        'model/quic-socket-base.cc',
-        'model/quic-socket-factory.cc',
-        'model/quic-l4-protocol.cc',
-        'model/quic-socket-rx-buffer.cc',
-        'model/quic-socket-tx-buffer.cc',
-        'model/quic-stream.cc',
-        'model/quic-stream-base.cc',
-        'model/quic-l5-protocol.cc',
-        'model/quic-stream-tx-buffer.cc',
-        'model/quic-stream-rx-buffer.cc',
-        'model/quic-header.cc',
-        'model/quic-subheader.cc',
-        'model/quic-transport-parameters.cc',
-        'helper/quic-helper.cc'
+        'helper/rip-helper.cc'
         ]
 
     internet_test = bld.create_ns3_module_test_library('internet')
@@ -308,10 +292,7 @@ def build(bld):
         'test/tcp-endpoint-bug2211.cc',
         'test/tcp-datasentcb-test.cc',
         'test/ipv4-rip-test.cc',
-        'test/tcp-close-test.cc',
-        'test/quic-rx-buffer-test.cc',
-        'test/quic-tx-buffer-test.cc',
-        'test/quic-header-test.cc',
+        'test/tcp-close-test.cc'
         
         ]
     privateheaders = bld(features='ns3privateheader')
@@ -430,23 +411,10 @@ def build(bld):
         'model/rip.h',
         'model/rip-header.h',
         'helper/rip-helper.h',
-        'model/quic-congestion-ops.h',
-        'model/quic-socket.h',
-        'model/quic-socket-base.h',
-        'model/quic-socket-factory.h',
-        'model/quic-l4-protocol.h',
-        'model/quic-socket-rx-buffer.h',
-        'model/quic-socket-tx-buffer.h',
-        'model/quic-stream.h',
-        'model/quic-stream-base.h',
-        'model/quic-l5-protocol.h',
-        'model/quic-stream-tx-buffer.h',
-        'model/quic-stream-rx-buffer.h',
-        'model/quic-header.h',
-        'model/quic-subheader.h',
         'model/ipv4-end-point.h',
-        'model/quic-transport-parameters.h',
-        'helper/quic-helper.h'
+        'model/ipv4-end-point-demux.h',
+        'model/ipv6-end-point.h',
+        'model/ipv6-end-point-demux.h',
        ]
 
     if bld.env['NSC_ENABLED']:

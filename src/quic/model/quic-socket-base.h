@@ -38,9 +38,9 @@
 #include "quic-header.h"
 #include "quic-subheader.h"
 #include "quic-transport-parameters.h"
-#include "ns3/ipv4-end-point.h"
-#include "tcp-socket-base.h"
-#include "tcp-congestion-ops.h"
+// #include "ns3/ipv4-end-point.h"
+#include "ns3/tcp-socket-base.h"
+#include "ns3/tcp-congestion-ops.h"
 
 namespace ns3 {
 

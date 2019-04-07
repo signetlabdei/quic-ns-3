@@ -31,7 +31,7 @@
 #include "ns3/nstime.h"
 #include "quic-subheader.h"
 #include "ns3/packet.h"
-#include "tcp-socket-base.h"
+#include "ns3/tcp-socket-base.h"
 
 namespace ns3 {
 
