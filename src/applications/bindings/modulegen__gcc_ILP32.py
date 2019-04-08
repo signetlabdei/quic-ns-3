@@ -238,6 +238,14 @@ def register_types(module):
     module.add_class('PcapHelperForDevice', allow_subclassing=True, import_from_module='ns.network')
     ## queue-size.h (module 'network'): ns3::QueueSize [class]
     module.add_class('QueueSize', import_from_module='ns.network')
+    ## quic-client-server-helper.h (module 'applications'): ns3::QuicClientHelper [class]
+    module.add_class('QuicClientHelper')
+    ## quic-echo-helper.h (module 'applications'): ns3::QuicEchoClientHelper [class]
+    module.add_class('QuicEchoClientHelper')
+    ## quic-echo-helper.h (module 'applications'): ns3::QuicEchoServerHelper [class]
+    module.add_class('QuicEchoServerHelper')
+    ## quic-client-server-helper.h (module 'applications'): ns3::QuicServerHelper [class]
+    module.add_class('QuicServerHelper')
     ## simple-net-device-helper.h (module 'network'): ns3::SimpleNetDeviceHelper [class]
     module.add_class('SimpleNetDeviceHelper', import_from_module='ns.network')
     ## simple-ref-count.h (module 'core'): ns3::SimpleRefCount<ns3::Object, ns3::ObjectBase, ns3::ObjectDeleter> [class]
@@ -708,6 +716,14 @@ def register_types(module):
     module.add_class('QueueSizeChecker', import_from_module='ns.network', parent=root_module['ns3::AttributeChecker'])
     ## queue-size.h (module 'network'): ns3::QueueSizeValue [class]
     module.add_class('QueueSizeValue', import_from_module='ns.network', parent=root_module['ns3::AttributeValue'])
+    ## quic-client.h (module 'applications'): ns3::QuicClient [class]
+    module.add_class('QuicClient', parent=root_module['ns3::Application'])
+    ## quic-echo-client.h (module 'applications'): ns3::QuicEchoClient [class]
+    module.add_class('QuicEchoClient', parent=root_module['ns3::Application'])
+    ## quic-echo-server.h (module 'applications'): ns3::QuicEchoServer [class]
+    module.add_class('QuicEchoServer', parent=root_module['ns3::Application'])
+    ## quic-server.h (module 'applications'): ns3::QuicServer [class]
+    module.add_class('QuicServer', parent=root_module['ns3::Application'])
     ## error-model.h (module 'network'): ns3::RateErrorModel [class]
     module.add_class('RateErrorModel', import_from_module='ns.network', parent=root_module['ns3::ErrorModel'])
     ## error-model.h (module 'network'): ns3::RateErrorModel::ErrorUnit [enumeration]
@@ -1052,6 +1068,10 @@ def register_methods(root_module):
     register_Ns3PcapHelper_methods(root_module, root_module['ns3::PcapHelper'])
     register_Ns3PcapHelperForDevice_methods(root_module, root_module['ns3::PcapHelperForDevice'])
     register_Ns3QueueSize_methods(root_module, root_module['ns3::QueueSize'])
+    register_Ns3QuicClientHelper_methods(root_module, root_module['ns3::QuicClientHelper'])
+    register_Ns3QuicEchoClientHelper_methods(root_module, root_module['ns3::QuicEchoClientHelper'])
+    register_Ns3QuicEchoServerHelper_methods(root_module, root_module['ns3::QuicEchoServerHelper'])
+    register_Ns3QuicServerHelper_methods(root_module, root_module['ns3::QuicServerHelper'])
     register_Ns3SimpleNetDeviceHelper_methods(root_module, root_module['ns3::SimpleNetDeviceHelper'])
     register_Ns3SimpleRefCount__Ns3Object_Ns3ObjectBase_Ns3ObjectDeleter_methods(root_module, root_module['ns3::SimpleRefCount< ns3::Object, ns3::ObjectBase, ns3::ObjectDeleter >'])
     register_Ns3Simulator_methods(root_module, root_module['ns3::Simulator'])
@@ -1209,6 +1229,10 @@ def register_methods(root_module):
     register_Ns3QueueItem_methods(root_module, root_module['ns3::QueueItem'])
     register_Ns3QueueSizeChecker_methods(root_module, root_module['ns3::QueueSizeChecker'])
     register_Ns3QueueSizeValue_methods(root_module, root_module['ns3::QueueSizeValue'])
+    register_Ns3QuicClient_methods(root_module, root_module['ns3::QuicClient'])
+    register_Ns3QuicEchoClient_methods(root_module, root_module['ns3::QuicEchoClient'])
+    register_Ns3QuicEchoServer_methods(root_module, root_module['ns3::QuicEchoServer'])
+    register_Ns3QuicServer_methods(root_module, root_module['ns3::QuicServer'])
     register_Ns3RateErrorModel_methods(root_module, root_module['ns3::RateErrorModel'])
     register_Ns3ReceiveListErrorModel_methods(root_module, root_module['ns3::ReceiveListErrorModel'])
     register_Ns3SimpleChannel_methods(root_module, root_module['ns3::SimpleChannel'])
@@ -3395,6 +3419,11 @@ def register_Ns3ObjectFactory_methods(root_module, cls):
                    'ns3::TypeId', 
                    [], 
                    is_const=True)
+    ## object-factory.h (module 'core'): bool ns3::ObjectFactory::IsTypeIdSet() const [member function]
+    cls.add_method('IsTypeIdSet', 
+                   'bool', 
+                   [], 
+                   is_const=True)
     ## object-factory.h (module 'core'): void ns3::ObjectFactory::Set(std::string name, ns3::AttributeValue const & value) [member function]
     cls.add_method('Set', 
                    'void', 
@@ -4154,6 +4183,112 @@ def register_Ns3QueueSize_methods(root_module, cls):
                    'uint32_t', 
                    [], 
                    is_const=True)
+    return
+
+def register_Ns3QuicClientHelper_methods(root_module, cls):
+    ## quic-client-server-helper.h (module 'applications'): ns3::QuicClientHelper::QuicClientHelper(ns3::QuicClientHelper const & arg0) [constructor]
+    cls.add_constructor([param('ns3::QuicClientHelper const &', 'arg0')])
+    ## quic-client-server-helper.h (module 'applications'): ns3::QuicClientHelper::QuicClientHelper() [constructor]
+    cls.add_constructor([])
+    ## quic-client-server-helper.h (module 'applications'): ns3::QuicClientHelper::QuicClientHelper(ns3::Address ip, uint16_t port) [constructor]
+    cls.add_constructor([param('ns3::Address', 'ip'), param('uint16_t', 'port')])
+    ## quic-client-server-helper.h (module 'applications'): ns3::QuicClientHelper::QuicClientHelper(ns3::Address addr) [constructor]
+    cls.add_constructor([param('ns3::Address', 'addr')])
+    ## quic-client-server-helper.h (module 'applications'): ns3::ApplicationContainer ns3::QuicClientHelper::Install(ns3::NodeContainer c) [member function]
+    cls.add_method('Install', 
+                   'ns3::ApplicationContainer', 
+                   [param('ns3::NodeContainer', 'c')])
+    ## quic-client-server-helper.h (module 'applications'): void ns3::QuicClientHelper::SetAttribute(std::string name, ns3::AttributeValue const & value) [member function]
+    cls.add_method('SetAttribute', 
+                   'void', 
+                   [param('std::string', 'name'), param('ns3::AttributeValue const &', 'value')])
+    return
+
+def register_Ns3QuicEchoClientHelper_methods(root_module, cls):
+    ## quic-echo-helper.h (module 'applications'): ns3::QuicEchoClientHelper::QuicEchoClientHelper(ns3::QuicEchoClientHelper const & arg0) [constructor]
+    cls.add_constructor([param('ns3::QuicEchoClientHelper const &', 'arg0')])
+    ## quic-echo-helper.h (module 'applications'): ns3::QuicEchoClientHelper::QuicEchoClientHelper(ns3::Address ip, uint16_t port) [constructor]
+    cls.add_constructor([param('ns3::Address', 'ip'), param('uint16_t', 'port')])
+    ## quic-echo-helper.h (module 'applications'): ns3::QuicEchoClientHelper::QuicEchoClientHelper(ns3::Address addr) [constructor]
+    cls.add_constructor([param('ns3::Address', 'addr')])
+    ## quic-echo-helper.h (module 'applications'): ns3::ApplicationContainer ns3::QuicEchoClientHelper::Install(ns3::Ptr<ns3::Node> node) const [member function]
+    cls.add_method('Install', 
+                   'ns3::ApplicationContainer', 
+                   [param('ns3::Ptr< ns3::Node >', 'node')], 
+                   is_const=True)
+    ## quic-echo-helper.h (module 'applications'): ns3::ApplicationContainer ns3::QuicEchoClientHelper::Install(std::string nodeName) const [member function]
+    cls.add_method('Install', 
+                   'ns3::ApplicationContainer', 
+                   [param('std::string', 'nodeName')], 
+                   is_const=True)
+    ## quic-echo-helper.h (module 'applications'): ns3::ApplicationContainer ns3::QuicEchoClientHelper::Install(ns3::NodeContainer c) const [member function]
+    cls.add_method('Install', 
+                   'ns3::ApplicationContainer', 
+                   [param('ns3::NodeContainer', 'c')], 
+                   is_const=True)
+    ## quic-echo-helper.h (module 'applications'): void ns3::QuicEchoClientHelper::SetAttribute(std::string name, ns3::AttributeValue const & value) [member function]
+    cls.add_method('SetAttribute', 
+                   'void', 
+                   [param('std::string', 'name'), param('ns3::AttributeValue const &', 'value')])
+    ## quic-echo-helper.h (module 'applications'): void ns3::QuicEchoClientHelper::SetFill(ns3::Ptr<ns3::Application> app, std::string fill) [member function]
+    cls.add_method('SetFill', 
+                   'void', 
+                   [param('ns3::Ptr< ns3::Application >', 'app'), param('std::string', 'fill')])
+    ## quic-echo-helper.h (module 'applications'): void ns3::QuicEchoClientHelper::SetFill(ns3::Ptr<ns3::Application> app, uint8_t fill, uint32_t dataLength) [member function]
+    cls.add_method('SetFill', 
+                   'void', 
+                   [param('ns3::Ptr< ns3::Application >', 'app'), param('uint8_t', 'fill'), param('uint32_t', 'dataLength')])
+    ## quic-echo-helper.h (module 'applications'): void ns3::QuicEchoClientHelper::SetFill(ns3::Ptr<ns3::Application> app, uint8_t * fill, uint32_t fillLength, uint32_t dataLength) [member function]
+    cls.add_method('SetFill', 
+                   'void', 
+                   [param('ns3::Ptr< ns3::Application >', 'app'), param('uint8_t *', 'fill'), param('uint32_t', 'fillLength'), param('uint32_t', 'dataLength')])
+    return
+
+def register_Ns3QuicEchoServerHelper_methods(root_module, cls):
+    ## quic-echo-helper.h (module 'applications'): ns3::QuicEchoServerHelper::QuicEchoServerHelper(ns3::QuicEchoServerHelper const & arg0) [constructor]
+    cls.add_constructor([param('ns3::QuicEchoServerHelper const &', 'arg0')])
+    ## quic-echo-helper.h (module 'applications'): ns3::QuicEchoServerHelper::QuicEchoServerHelper(uint16_t port) [constructor]
+    cls.add_constructor([param('uint16_t', 'port')])
+    ## quic-echo-helper.h (module 'applications'): ns3::ApplicationContainer ns3::QuicEchoServerHelper::Install(ns3::Ptr<ns3::Node> node) const [member function]
+    cls.add_method('Install', 
+                   'ns3::ApplicationContainer', 
+                   [param('ns3::Ptr< ns3::Node >', 'node')], 
+                   is_const=True)
+    ## quic-echo-helper.h (module 'applications'): ns3::ApplicationContainer ns3::QuicEchoServerHelper::Install(std::string nodeName) const [member function]
+    cls.add_method('Install', 
+                   'ns3::ApplicationContainer', 
+                   [param('std::string', 'nodeName')], 
+                   is_const=True)
+    ## quic-echo-helper.h (module 'applications'): ns3::ApplicationContainer ns3::QuicEchoServerHelper::Install(ns3::NodeContainer c) const [member function]
+    cls.add_method('Install', 
+                   'ns3::ApplicationContainer', 
+                   [param('ns3::NodeContainer', 'c')], 
+                   is_const=True)
+    ## quic-echo-helper.h (module 'applications'): void ns3::QuicEchoServerHelper::SetAttribute(std::string name, ns3::AttributeValue const & value) [member function]
+    cls.add_method('SetAttribute', 
+                   'void', 
+                   [param('std::string', 'name'), param('ns3::AttributeValue const &', 'value')])
+    return
+
+def register_Ns3QuicServerHelper_methods(root_module, cls):
+    ## quic-client-server-helper.h (module 'applications'): ns3::QuicServerHelper::QuicServerHelper(ns3::QuicServerHelper const & arg0) [constructor]
+    cls.add_constructor([param('ns3::QuicServerHelper const &', 'arg0')])
+    ## quic-client-server-helper.h (module 'applications'): ns3::QuicServerHelper::QuicServerHelper() [constructor]
+    cls.add_constructor([])
+    ## quic-client-server-helper.h (module 'applications'): ns3::QuicServerHelper::QuicServerHelper(uint16_t port) [constructor]
+    cls.add_constructor([param('uint16_t', 'port')])
+    ## quic-client-server-helper.h (module 'applications'): ns3::Ptr<ns3::QuicServer> ns3::QuicServerHelper::GetServer() [member function]
+    cls.add_method('GetServer', 
+                   'ns3::Ptr< ns3::QuicServer >', 
+                   [])
+    ## quic-client-server-helper.h (module 'applications'): ns3::ApplicationContainer ns3::QuicServerHelper::Install(ns3::NodeContainer c) [member function]
+    cls.add_method('Install', 
+                   'ns3::ApplicationContainer', 
+                   [param('ns3::NodeContainer', 'c')])
+    ## quic-client-server-helper.h (module 'applications'): void ns3::QuicServerHelper::SetAttribute(std::string name, ns3::AttributeValue const & value) [member function]
+    cls.add_method('SetAttribute', 
+                   'void', 
+                   [param('std::string', 'name'), param('ns3::AttributeValue const &', 'value')])
     return
 
 def register_Ns3SimpleNetDeviceHelper_methods(root_module, cls):
@@ -11226,6 +11361,198 @@ def register_Ns3QueueSizeValue_methods(root_module, cls):
     cls.add_method('Set', 
                    'void', 
                    [param('ns3::QueueSize const &', 'value')])
+    return
+
+def register_Ns3QuicClient_methods(root_module, cls):
+    ## quic-client.h (module 'applications'): ns3::QuicClient::QuicClient(ns3::QuicClient const & arg0) [constructor]
+    cls.add_constructor([param('ns3::QuicClient const &', 'arg0')])
+    ## quic-client.h (module 'applications'): ns3::QuicClient::QuicClient() [constructor]
+    cls.add_constructor([])
+    ## quic-client.h (module 'applications'): static ns3::TypeId ns3::QuicClient::GetTypeId() [member function]
+    cls.add_method('GetTypeId', 
+                   'ns3::TypeId', 
+                   [], 
+                   is_static=True)
+    ## quic-client.h (module 'applications'): void ns3::QuicClient::SetRemote(ns3::Address ip, uint16_t port) [member function]
+    cls.add_method('SetRemote', 
+                   'void', 
+                   [param('ns3::Address', 'ip'), param('uint16_t', 'port')])
+    ## quic-client.h (module 'applications'): void ns3::QuicClient::SetRemote(ns3::Address addr) [member function]
+    cls.add_method('SetRemote', 
+                   'void', 
+                   [param('ns3::Address', 'addr')])
+    ## quic-client.h (module 'applications'): void ns3::QuicClient::DoDispose() [member function]
+    cls.add_method('DoDispose', 
+                   'void', 
+                   [], 
+                   visibility='protected', is_virtual=True)
+    ## quic-client.h (module 'applications'): void ns3::QuicClient::StartApplication() [member function]
+    cls.add_method('StartApplication', 
+                   'void', 
+                   [], 
+                   visibility='private', is_virtual=True)
+    ## quic-client.h (module 'applications'): void ns3::QuicClient::StopApplication() [member function]
+    cls.add_method('StopApplication', 
+                   'void', 
+                   [], 
+                   visibility='private', is_virtual=True)
+    return
+
+def register_Ns3QuicEchoClient_methods(root_module, cls):
+    ## quic-echo-client.h (module 'applications'): ns3::QuicEchoClient::QuicEchoClient(ns3::QuicEchoClient const & arg0) [constructor]
+    cls.add_constructor([param('ns3::QuicEchoClient const &', 'arg0')])
+    ## quic-echo-client.h (module 'applications'): ns3::QuicEchoClient::QuicEchoClient() [constructor]
+    cls.add_constructor([])
+    ## quic-echo-client.h (module 'applications'): uint32_t ns3::QuicEchoClient::GetDataSize() const [member function]
+    cls.add_method('GetDataSize', 
+                   'uint32_t', 
+                   [], 
+                   is_const=True)
+    ## quic-echo-client.h (module 'applications'): uint32_t ns3::QuicEchoClient::GetStreamId() const [member function]
+    cls.add_method('GetStreamId', 
+                   'uint32_t', 
+                   [], 
+                   is_const=True)
+    ## quic-echo-client.h (module 'applications'): static ns3::TypeId ns3::QuicEchoClient::GetTypeId() [member function]
+    cls.add_method('GetTypeId', 
+                   'ns3::TypeId', 
+                   [], 
+                   is_static=True)
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::ScheduleClosing(ns3::Time dt) [member function]
+    cls.add_method('ScheduleClosing', 
+                   'void', 
+                   [param('ns3::Time', 'dt')])
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::ScheduleRestart(ns3::Time dt) [member function]
+    cls.add_method('ScheduleRestart', 
+                   'void', 
+                   [param('ns3::Time', 'dt')])
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::SetDataSize(uint32_t dataSize) [member function]
+    cls.add_method('SetDataSize', 
+                   'void', 
+                   [param('uint32_t', 'dataSize')])
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::SetFill(std::string fill) [member function]
+    cls.add_method('SetFill', 
+                   'void', 
+                   [param('std::string', 'fill')])
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::SetFill(uint8_t fill, uint32_t dataSize) [member function]
+    cls.add_method('SetFill', 
+                   'void', 
+                   [param('uint8_t', 'fill'), param('uint32_t', 'dataSize')])
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::SetFill(uint8_t * fill, uint32_t fillSize, uint32_t dataSize) [member function]
+    cls.add_method('SetFill', 
+                   'void', 
+                   [param('uint8_t *', 'fill'), param('uint32_t', 'fillSize'), param('uint32_t', 'dataSize')])
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::SetRemote(ns3::Address ip, uint16_t port) [member function]
+    cls.add_method('SetRemote', 
+                   'void', 
+                   [param('ns3::Address', 'ip'), param('uint16_t', 'port')])
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::SetRemote(ns3::Address addr) [member function]
+    cls.add_method('SetRemote', 
+                   'void', 
+                   [param('ns3::Address', 'addr')])
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::SetStreamId(uint32_t streamId) [member function]
+    cls.add_method('SetStreamId', 
+                   'void', 
+                   [param('uint32_t', 'streamId')])
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::DoDispose() [member function]
+    cls.add_method('DoDispose', 
+                   'void', 
+                   [], 
+                   visibility='protected', is_virtual=True)
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::StartApplication() [member function]
+    cls.add_method('StartApplication', 
+                   'void', 
+                   [], 
+                   visibility='private', is_virtual=True)
+    ## quic-echo-client.h (module 'applications'): void ns3::QuicEchoClient::StopApplication() [member function]
+    cls.add_method('StopApplication', 
+                   'void', 
+                   [], 
+                   visibility='private', is_virtual=True)
+    return
+
+def register_Ns3QuicEchoServer_methods(root_module, cls):
+    ## quic-echo-server.h (module 'applications'): ns3::QuicEchoServer::QuicEchoServer(ns3::QuicEchoServer const & arg0) [constructor]
+    cls.add_constructor([param('ns3::QuicEchoServer const &', 'arg0')])
+    ## quic-echo-server.h (module 'applications'): ns3::QuicEchoServer::QuicEchoServer() [constructor]
+    cls.add_constructor([])
+    ## quic-echo-server.h (module 'applications'): ns3::Ptr<ns3::Socket> ns3::QuicEchoServer::GetSocket() [member function]
+    cls.add_method('GetSocket', 
+                   'ns3::Ptr< ns3::Socket >', 
+                   [])
+    ## quic-echo-server.h (module 'applications'): uint32_t ns3::QuicEchoServer::GetStreamId() const [member function]
+    cls.add_method('GetStreamId', 
+                   'uint32_t', 
+                   [], 
+                   is_const=True)
+    ## quic-echo-server.h (module 'applications'): static ns3::TypeId ns3::QuicEchoServer::GetTypeId() [member function]
+    cls.add_method('GetTypeId', 
+                   'ns3::TypeId', 
+                   [], 
+                   is_static=True)
+    ## quic-echo-server.h (module 'applications'): void ns3::QuicEchoServer::SetStreamId(uint32_t streamId) [member function]
+    cls.add_method('SetStreamId', 
+                   'void', 
+                   [param('uint32_t', 'streamId')])
+    ## quic-echo-server.h (module 'applications'): void ns3::QuicEchoServer::DoDispose() [member function]
+    cls.add_method('DoDispose', 
+                   'void', 
+                   [], 
+                   visibility='protected', is_virtual=True)
+    ## quic-echo-server.h (module 'applications'): void ns3::QuicEchoServer::StartApplication() [member function]
+    cls.add_method('StartApplication', 
+                   'void', 
+                   [], 
+                   visibility='private', is_virtual=True)
+    ## quic-echo-server.h (module 'applications'): void ns3::QuicEchoServer::StopApplication() [member function]
+    cls.add_method('StopApplication', 
+                   'void', 
+                   [], 
+                   visibility='private', is_virtual=True)
+    return
+
+def register_Ns3QuicServer_methods(root_module, cls):
+    ## quic-server.h (module 'applications'): static ns3::TypeId ns3::QuicServer::GetTypeId() [member function]
+    cls.add_method('GetTypeId', 
+                   'ns3::TypeId', 
+                   [], 
+                   is_static=True)
+    ## quic-server.h (module 'applications'): ns3::QuicServer::QuicServer() [constructor]
+    cls.add_constructor([])
+    ## quic-server.h (module 'applications'): uint32_t ns3::QuicServer::GetLost() const [member function]
+    cls.add_method('GetLost', 
+                   'uint32_t', 
+                   [], 
+                   is_const=True)
+    ## quic-server.h (module 'applications'): uint64_t ns3::QuicServer::GetReceived() const [member function]
+    cls.add_method('GetReceived', 
+                   'uint64_t', 
+                   [], 
+                   is_const=True)
+    ## quic-server.h (module 'applications'): uint16_t ns3::QuicServer::GetPacketWindowSize() const [member function]
+    cls.add_method('GetPacketWindowSize', 
+                   'uint16_t', 
+                   [], 
+                   is_const=True)
+    ## quic-server.h (module 'applications'): void ns3::QuicServer::SetPacketWindowSize(uint16_t size) [member function]
+    cls.add_method('SetPacketWindowSize', 
+                   'void', 
+                   [param('uint16_t', 'size')])
+    ## quic-server.h (module 'applications'): void ns3::QuicServer::DoDispose() [member function]
+    cls.add_method('DoDispose', 
+                   'void', 
+                   [], 
+                   visibility='protected', is_virtual=True)
+    ## quic-server.h (module 'applications'): void ns3::QuicServer::StartApplication() [member function]
+    cls.add_method('StartApplication', 
+                   'void', 
+                   [], 
+                   visibility='private', is_virtual=True)
+    ## quic-server.h (module 'applications'): void ns3::QuicServer::StopApplication() [member function]
+    cls.add_method('StopApplication', 
+                   'void', 
+                   [], 
+                   visibility='private', is_virtual=True)
     return
 
 def register_Ns3RateErrorModel_methods(root_module, cls):
